@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'models/user.dart';
+import 'user.dart';
 
+var box;
+int _count = 3;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -10,7 +12,7 @@ void main() async {
 
   Hive.registerAdapter(UserModelAdapter());
 
-  var box = await Hive.openBox<UserModel>('users');
+  box = await Hive.openBox<UserModel>('users');
 
   if (box.isEmpty) {
     box.add(UserModel(id: 1, name: 'Ahmed Ali', email: 'ahmed@gmail.com'));
@@ -62,7 +64,6 @@ class HomePage extends StatelessWidget {
           return ListView.builder(
             itemCount: box.length,
             itemBuilder: (context, index) {
-              // جلب المستخدم حسب الـ index
               UserModel user = box.getAt(index)!;
 
               return Card(
@@ -90,6 +91,7 @@ class HomePage extends StatelessWidget {
               if (box.isNotEmpty) {
                 box.deleteAt(box.length - 1);
               }
+              _count--;
             },
             child: const Icon(Icons.remove, color: Colors.white),
           ),
@@ -97,9 +99,10 @@ class HomePage extends StatelessWidget {
           FloatingActionButton(
             heroTag: 'btn2',
             onPressed: () {
+              _count++;
               box.add(
                 UserModel(
-                  id: 4,
+                  id: _count,
                   name: 'Bavly Romany ',
                   email: 'bavly@gmail.com',
                 ),
